@@ -18,15 +18,15 @@ public class App {
                 "-----------------------------------\n","Promotion used:\n",
                 "==================================="};
         StringJoiner result=new StringJoiner("");
-        final int[] priceSum = {0};
-        final int[] SOME_ITEM_HALF = {0};
+        int priceSum;
+        int[] SOME_ITEM_HALF = new int[1];
         result.add(Strings[0]);
         for (String inputsString:inputs) {
             this.itemRepository.findAll().stream().filter(item -> item.getName() == inputsString).forEach(item -> {
-                result.add(item + " = " + item.getPrice()*(inputsString.indexOf(inputsString.length()-1)) + " yuan\n");
-                priceSum[0] +=(int)(item.getPrice()*(inputsString.indexOf(inputsString.length()-1)));
-                SOME_ITEM_HALF[0]=(int)(item.getPrice()*(inputsString.indexOf(inputsString.length()-1)));
-                salesPromotionRepository.findAll().forEach(SalesPromotion->{if(SalesPromotion.getRelatedItems().contains(item)){
+                result.add(item.getName()+"*"+ item.getPrice() + " = " + item.getPrice()*(inputsString.indexOf(inputsString.length()-1)) + " yuan\n");
+                priceSum +=(int)(item.getPrice()*(inputsString.indexOf(inputsString.length()-1)));
+                SOME_ITEM_HALF[0]+=(int)(item.getPrice()*(inputsString.indexOf(inputsString.length()-1)));
+                salesPromotionRepository.findAll().forEach(SalesPromotion->{if(SalesPromotion.getRelatedItems().contains(item.getId())){
                     SOME_ITEM_HALF[0] -=(int) (item.getPrice()/2*(inputsString.indexOf(inputsString.length()-1)));
                 }});
                 if (inputsString == inputs.get(inputs.size() - 1)) {
@@ -38,14 +38,16 @@ public class App {
         while (BUY_30_SAVE_6>30){
             BUY_30_SAVE_6-=6;
         }
-        if (30 > priceSum[0]){
+        if (30 > priceSum[0]&&priceSum[0]<SOME_ITEM_HALF[0]){
             result.add("Total："+priceSum[0]+" yuan\n");
         }else if (BUY_30_SAVE_6<=SOME_ITEM_HALF[0]){
             result.add(Strings[2]);
             result.add("满30减6 yuan，saving "+(priceSum[0]-BUY_30_SAVE_6)+" yuan\n");
+            result.add("Total："+BUY_30_SAVE_6+" yuan\n");
         }else {
             result.add(Strings[2]);
             result.add("Half price for certain dishes (Braised chicken，Cold noodles)，saving "+(priceSum[0]-SOME_ITEM_HALF[0])+" yuan\n");
+            result.add("Total："+SOME_ITEM_HALF[0]+" yuan\n");
         }
         result.add(Strings[3]);
         //StringJoiner result=new StringJoiner("+");
