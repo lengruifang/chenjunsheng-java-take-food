@@ -37,10 +37,10 @@ public class App {
             }
         }
         int BUY_30_SAVE_6 = priceSum;
-        while (BUY_30_SAVE_6>30){
+        while (BUY_30_SAVE_6>=30){
             BUY_30_SAVE_6-=6;
         }
-        if (30 > priceSum&& priceSum< SOME_ITEM_HALF){
+        if (30 > priceSum&& priceSum==SOME_ITEM_HALF){
             result.add("Total："+ priceSum+" yuan\n");
         }else if (BUY_30_SAVE_6<= SOME_ITEM_HALF){
             result.add(Strings[2]);
