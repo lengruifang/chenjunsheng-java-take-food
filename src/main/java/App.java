@@ -18,36 +18,40 @@ public class App {
                 "-----------------------------------\n","Promotion used:\n",
                 "==================================="};
         StringJoiner result=new StringJoiner("");
-        int priceSum;
-        int[] SOME_ITEM_HALF = new int[1];
+         int priceSum = 0;
+         int SOME_ITEM_HALF = 0;
         result.add(Strings[0]);
         for (String inputsString:inputs) {
-            this.itemRepository.findAll().stream().filter(item -> item.getName() == inputsString).forEach(item -> {
-                result.add(item.getName()+"*"+ item.getPrice() + " = " + item.getPrice()*(inputsString.indexOf(inputsString.length()-1)) + " yuan\n");
-                priceSum +=(int)(item.getPrice()*(inputsString.indexOf(inputsString.length()-1)));
-                SOME_ITEM_HALF[0]+=(int)(item.getPrice()*(inputsString.indexOf(inputsString.length()-1)));
-                salesPromotionRepository.findAll().forEach(SalesPromotion->{if(SalesPromotion.getRelatedItems().contains(item.getId())){
-                    SOME_ITEM_HALF[0] -=(int) (item.getPrice()/2*(inputsString.indexOf(inputsString.length()-1)));
-                }});
-                if (inputsString == inputs.get(inputs.size() - 1)) {
-                    result.add(Strings[1]);
+            for (Item item : this.itemRepository.findAll()) {
+                if (item.getId().equals(inputsString.substring(0,8))) {
+                    result.add(item.getName() + " x " + inputsString.substring(11) + " = " + (int) (item.getPrice() * Integer.valueOf(inputsString.substring(11))) + " yuan\n");
+                    priceSum += (int) (item.getPrice() * (Integer.valueOf(inputsString.substring(11))));
+                    SOME_ITEM_HALF += (int) (item.getPrice() * (Integer.valueOf(inputsString.substring(11))));
+                        if (this.salesPromotionRepository.findAll().get(1).getRelatedItems().contains(item.getId())){
+                            SOME_ITEM_HALF -= (int) (item.getPrice() / 2 * (Integer.valueOf(inputsString.substring(11))));
+                        }
+                    if (inputsString.equals(inputs.get(inputs.size() - 1))) {
+                        result.add(Strings[1]);
+                    }
                 }
-            });
+            }
         }
-        int BUY_30_SAVE_6=priceSum[0];
+        int BUY_30_SAVE_6 = priceSum;
         while (BUY_30_SAVE_6>30){
             BUY_30_SAVE_6-=6;
         }
-        if (30 > priceSum[0]&&priceSum[0]<SOME_ITEM_HALF[0]){
-            result.add("Total："+priceSum[0]+" yuan\n");
-        }else if (BUY_30_SAVE_6<=SOME_ITEM_HALF[0]){
+        if (30 > priceSum&& priceSum< SOME_ITEM_HALF){
+            result.add("Total："+ priceSum+" yuan\n");
+        }else if (BUY_30_SAVE_6<= SOME_ITEM_HALF){
             result.add(Strings[2]);
-            result.add("满30减6 yuan，saving "+(priceSum[0]-BUY_30_SAVE_6)+" yuan\n");
+            result.add("满30减6 yuan，saving "+(priceSum-BUY_30_SAVE_6)+" yuan\n");
+            result.add(Strings[1]);
             result.add("Total："+BUY_30_SAVE_6+" yuan\n");
         }else {
             result.add(Strings[2]);
-            result.add("Half price for certain dishes (Braised chicken，Cold noodles)，saving "+(priceSum[0]-SOME_ITEM_HALF[0])+" yuan\n");
-            result.add("Total："+SOME_ITEM_HALF[0]+" yuan\n");
+            result.add("Half price for certain dishes (Braised chicken，Cold noodles)，saving "+(priceSum - SOME_ITEM_HALF)+" yuan\n");
+            result.add(Strings[1]);
+            result.add("Total："+ SOME_ITEM_HALF +" yuan\n");
         }
         result.add(Strings[3]);
         //StringJoiner result=new StringJoiner("+");
